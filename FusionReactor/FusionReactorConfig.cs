@@ -8,9 +8,11 @@ namespace FusionReactor
     {
             public const string ID = "FusionReactor";
 
-            private const float IRON_BURN_RATE = 1f;
+            private const float IRON_CREATE_RATE = .0018f;
 
-            private const float HYDROGEN_BURN_RATE = 600f;
+            private const float HYDROGEN_BURN_RATE = .5f;
+
+            private const float STORAGE_SIZE = 20f;
 
             public const float CO2_OUTPUT_TEMPERATURE = 383.15f;
 
@@ -45,26 +47,19 @@ namespace FusionReactor
             {
                 go.GetComponent<KPrefabID>().AddTag(RoomConstraints.ConstraintTags.IndustrialMachinery);
                 EnergyGenerator energyGenerator = go.AddOrGet<EnergyGenerator>();
-                energyGenerator.formula = new EnergyGenerator.Formula
-                {
 
-                    inputs = new EnergyGenerator.InputItem[]
-                    {
-                        new EnergyGenerator.InputItem(GameTags.Hydrogen, .5f, 10f)
-                    },
-                    outputs = new EnergyGenerator.OutputItem[]
-                    {
-                            new EnergyGenerator.OutputItem(SimHashes.Iron, 0.0018f, false, new CellOffset(0, 0), 473.15f)
-                    }
+                energyGenerator.formula = EnergyGenerator.CreateSimpleFormula(
+                    SimHashes.Hydrogen.CreateTag(), HYDROGEN_BURN_RATE, 10f,
+                    SimHashes.Iron, IRON_CREATE_RATE, false, new CellOffset(0, 0), 473.15f);
 
-                };
                 energyGenerator.SetSliderValue(50f, 0);
                 energyGenerator.meterOffset = Meter.Offset.Behind;
-                energyGenerator.hasMeter = true;
                 energyGenerator.powerDistributionOrder = 9;
+
                 energyGenerator.ignoreBatteryRefillPercent = true;
                 Storage storage = go.AddOrGet<Storage>();
-                storage.capacityKg = 20f;
+                storage.capacityKg = STORAGE_SIZE;
+
                 go.AddOrGet<LoopingSounds>();
                 Prioritizable.AddRef(go);
                 Tinkerable.MakePowerTinkerable(go);
