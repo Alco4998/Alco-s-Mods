@@ -12,7 +12,7 @@ namespace FusionReactor
     {
         private static void Prefix()
         {
-            Strings.Add($"STRINGS.BUILDINGS.PREFABS.{FusionReactorConfig.ID.ToUpper()}.NAME", string.Concat("Fusion Reactor", UI.FormatAsLink("Stellarator", FusionReactorConfig.ID)));
+            Strings.Add($"STRINGS.BUILDINGS.PREFABS.{FusionReactorConfig.ID.ToUpper()}.NAME", string.Concat("Fusion ", UI.FormatAsLink("\"Stellarator\"", FusionReactorConfig.ID), " Reactor"));
             Strings.Add($"STRINGS.BUILDINGS.PREFABS.{FusionReactorConfig.ID.ToUpper()}.EFFECT", string.Concat("Smashing Atoms together"));
             Strings.Add($"STRINGS.BUILDINGS.PREFABS.{FusionReactorConfig.ID.ToUpper()}.DESC", string.Concat("This Fusion Reactor is a Highly Powerful Generator that Gets really Hot.\nit's based on the Stellarator fusion reactor and uses Stellar nucleosynthesis to create Metal from Hydrogen"));
 
@@ -31,12 +31,12 @@ namespace FusionReactor
         }
     }
 
-    /*[HarmonyPatch(typeof(SingleSliderSideScreen), "isvalidfortarget")]
-    internal class SingleSliderSideScreen_IsValidForTarget
+    [HarmonyPatch(typeof(SingleSliderSideScreen), "IsValidForTarget")]
+    public class SingleSliderSideScreen_IsValidForTarget
     {
-        public bool prefix()
+        public static void Postfix(ref bool __result, GameObject target)
         {
-            
+            __result = !target.GetComponent<KPrefabID>().HasTag("FusionReactor".ToTag()) || __result == false;
         }
-    }*/
+    }
 }
