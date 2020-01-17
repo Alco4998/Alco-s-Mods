@@ -1,0 +1,7 @@
+﻿Need to override
+
+public override bool IsValidForTarget(GameObject target)
+{
+	KPrefabID component = target.GetComponent<KPrefabID>();
+	return target.GetComponent<ISingleSliderControl>() != null && !component.HasTag("HydrogenGenerator".ToTag()) && !component.HasTag("MethaneGenerator".ToTag()) && !component.HasTag("PetroleumGenerator".ToTag());
+}
