@@ -33,10 +33,13 @@ namespace FusionReactor
 
     [HarmonyPatch(typeof(SingleSliderSideScreen), "IsValidForTarget")]
     public class SingleSliderSideScreen_IsValidForTarget
-    {
+     {
         public static void Postfix(ref bool __result, GameObject target)
         {
-            __result = !target.GetComponent<KPrefabID>().HasTag("FusionReactor".ToTag()) || __result == false;
+            KPrefabID component = target.GetComponent<KPrefabID>();
+            Debug.Log(__result);
+            __result =  !component.HasTag("FusionReactor".ToTag()) || __result == false;
+            Debug.Log(__result);
         }
     }
 }
