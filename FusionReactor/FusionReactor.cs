@@ -37,9 +37,7 @@ namespace FusionReactor
         public static void Postfix(ref bool __result, GameObject target)
         {
             KPrefabID component = target.GetComponent<KPrefabID>();
-            Debug.Log(__result);
-            __result =  !component.HasTag("FusionReactor".ToTag()) || __result == false;
-            Debug.Log(__result);
+            __result =  !(component.HasTag("FusionReactor".ToTag())) || __result;
         }
     }
 }
