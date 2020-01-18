@@ -56,7 +56,6 @@
   <ItemGroup>
     <Compile Include="FusionReactor.cs" />
     <Compile Include="FusionReactorConfig.cs" />
-    <Compile Include="FusionReactorPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -8,11 +8,11 @@ namespace FusionReactor
     {
             public const string ID = "FusionReactor";
 
-            private const float IRON_CREATE_RATE = .0018f;
+            private const float IRON_CREATE_RATE = 1f;
 
-            private const float HYDROGEN_BURN_RATE = .5f;
+            private const float HYDROGEN_BURN_RATE = 55f;
 
-            private const float STORAGE_SIZE = 20f;
+            private const float STORAGE_SIZE = 50f;
 
             public const float CO2_OUTPUT_TEMPERATURE = 383.15f;
 
@@ -32,8 +32,7 @@ namespace FusionReactor
                 BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(id, width, height, anim, hitpoints, construction_time, tIER, aLL_METALS, melting_point, build_location_rule, BUILDINGS.DECOR.PENALTY.TIER2, tIER2, 0.2f);
                 buildingDef.GeneratorWattageRating = 2000f;
                 buildingDef.GeneratorBaseCapacity = 2000f;
-                buildingDef.ExhaustKilowattsWhenActive = 8f;
-                buildingDef.SelfHeatKilowattsWhenActive = 1f;
+                buildingDef.SelfHeatKilowattsWhenActive = 300f;
                 buildingDef.ViewMode = OverlayModes.Power.ID;
                 buildingDef.InputConduitType = ConduitType.Gas;
                 buildingDef.UtilityInputOffset = new CellOffset(-1, 0); 
@@ -50,15 +49,27 @@ namespace FusionReactor
 
                 energyGenerator.formula = EnergyGenerator.CreateSimpleFormula(
                     SimHashes.Hydrogen.CreateTag(), HYDROGEN_BURN_RATE, 10f,
-                    SimHashes.Iron, IRON_CREATE_RATE, false, new CellOffset(0, 0), 473.15f);
-
-                energyGenerator.SetSliderValue(50f, 0);
+                    SimHashes.Iron, IRON_CREATE_RATE, true, new CellOffset(0, 0), 473.15f);
+            
                 energyGenerator.meterOffset = Meter.Offset.Behind;
                 energyGenerator.powerDistributionOrder = 9;
 
                 energyGenerator.ignoreBatteryRefillPercent = true;
                 Storage storage = go.AddOrGet<Storage>();
                 storage.capacityKg = STORAGE_SIZE;
+
+                ConduitConsumer conduitConsumer = go.AddOrGet<ConduitConsumer>();
+                conduitConsumer.conduitType = ConduitType.Gas;
+                conduitConsumer.consumptionRate = 2f;
+                conduitConsumer.capacityKG = 8f;
+                conduitConsumer.forceAlwaysSatisfied = true;
+                conduitConsumer.capacityTag = GameTagExtensions.Create(SimHashes.Hydrogen);
+                conduitConsumer.wrongElementResult = ConduitConsumer.WrongElementResult.Dump;
+
+                ElementDropper elementDropper = go.AddOrGet<ElementDropper>();
+                elementDropper.emitTag = new Tag("Iron");
+                elementDropper.emitMass = 10f;
+                elementDropper.emitOffset = new Vector3(0f, 0f, 0f);
 
                 go.AddOrGet<LoopingSounds>();
                 Prioritizable.AddRef(go);
