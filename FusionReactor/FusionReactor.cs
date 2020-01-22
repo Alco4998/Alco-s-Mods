@@ -46,7 +46,6 @@ namespace FusionReactor
                     __result = false;
                 }
             }
-            //__result = !(component.HasTag("FusionReactor".ToTag())) && __result;
         }
     }
 

@@ -8,9 +8,9 @@ namespace FusionReactor
     {
             public const string ID = "FusionReactor";
 
-            private const float IRON_CREATE_RATE = 1f;
+            private const float IRON_CREATE_RATE = 0.01818f;
 
-            private const float HYDROGEN_BURN_RATE = 55f;
+            private const float HYDROGEN_BURN_RATE = 1f;
 
             private const float STORAGE_SIZE = 50f;
 
