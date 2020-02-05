@@ -9,10 +9,14 @@ namespace Inductornator
     public class InductorConfig : IBuildingConfig
     {
         public const string ID = "Inductor";
+
         public const string NAME = "Inductor";
-        public const string EFFECT = "GeyserTamer";
-        public const string DESCRIPTION = "FEEESH";
-        public const string RECIPE_DESCRIPTION = "Melts {0} into {1}";
+
+        public const string EFFECT = "test";
+
+        public const string DESCRIPTION = "Melt metals with the great power of magnets to produce Loads of Metals without dupes";
+
+        public const string RECIPE_DESCRIPTION = "Melts {1} into Molten {0}";
 
         private const float INPUT_KG = 100f;
 
@@ -57,7 +61,7 @@ namespace Inductornator
             Inductor.sideScreenStyle = ComplexFabricatorSideScreen.StyleSetting.ListQueueHybrid;
             go.AddOrGet<CopyBuildingSettings>();
             ComplexFabricatorWorkable complexFabricatorWorkable = go.AddOrGet<ComplexFabricatorWorkable>();
-            Inductor.duplicantOperated = true;
+            Inductor.duplicantOperated = false;
             BuildingTemplates.CreateComplexFabricatorStorage(go, Inductor);
             Inductor.outStorage.capacityKg = 2000f;
             Inductor.storeProduced = true;
@@ -67,19 +71,26 @@ namespace Inductornator
             Inductor.outputOffset = new Vector3(1f, 0.5f);
             complexFabricatorWorkable.overrideAnims = new KAnimFile[]
             {
-            Assets.GetAnim("anim_interacts_metalrefinery_kanim")
+                Assets.GetAnim("anim_interacts_metalrefinery_kanim")
             };
+
+            Inductor.resultState = ComplexFabricator.ResultState.Melted;
             ConduitDispenser conduitDispenser = go.AddOrGet<ConduitDispenser>();
             conduitDispenser.storage = Inductor.outStorage;
             conduitDispenser.conduitType = ConduitType.Liquid;
             conduitDispenser.elementFilter = null;
             conduitDispenser.alwaysDispense = true;
 
+            this.ConfigureRecipes();
+            Prioritizable.AddRef(go);
+        }
+
+        private void ConfigureRecipes()
+        {
             List<Element> list = ElementLoader.elements.FindAll((Element e) => e.IsSolid && e.HasTag(GameTags.Metal));
             ComplexRecipe complexRecipe;
             foreach (Element current in list)
             {
-                if (current.tag != SimHashes.TempConductorSolid.CreateTag())
                 Element highTempTransition = current.highTempTransition;
                 Element lowTempTransition = highTempTransition.lowTempTransition;
                 if (lowTempTransition != current)
@@ -94,148 +105,24 @@ namespace Inductornator
                     };
                     string obsolete_id = ComplexRecipeManager.MakeObsoleteRecipeID("Inductor", current.tag);
                     string text = ComplexRecipeManager.MakeRecipeID("Inductor", array, array2);
-                    complexRecipe = new ComplexRecipe(text, array, array2);
-                    complexRecipe.time = 100f;
-                    complexRecipe.description = string.Format(STRINGS.BUILDINGS.PREFABS.METALREFINERY.RECIPE_DESCRIPTION, highTempTransition.name, current.name);
-                    complexRecipe.nameDisplay = ComplexRecipe.RecipeNameDisplay.IngredientToResult;
-                    complexRecipe.fabricators = new List<Tag>
-                {
-                    TagManager.Create("Inductor")
-                };
-                    ComplexRecipeManager.Get().AddObsoleteIDMapping(obsolete_id, text);
+                    complexRecipe = new ComplexRecipe(text, array, array2)
+                    {
+                        time = (current.highTemp / 10),
+
+                        description = string.Format(RECIPE_DESCRIPTION, highTempTransition.name, current.name),
+
+                        nameDisplay = ComplexRecipe.RecipeNameDisplay.IngredientToResult,
+
+                        fabricators = new List<Tag>
+                        {
+                            TagManager.Create("Inductor")
+                        }
+                    };
+                ComplexRecipeManager.Get().AddObsoleteIDMapping(obsolete_id, text);
                 }
             }
-            /*ComplexRecipe.RecipeElement[] Input = new ComplexRecipe.RecipeElement[] //Copper
-                {
-                    new ComplexRecipe.RecipeElement(ElementLoader.FindElementByHash(SimHashes.Copper).tag, 100f)
-                };
-            ComplexRecipe.RecipeElement[] Input2 = new ComplexRecipe.RecipeElement[] //Iron
-                {
-                    new ComplexRecipe.RecipeElement(ElementLoader.FindElementByHash(SimHashes.IronOre).tag, 100f)
-                };
-            ComplexRecipe.RecipeElement[] Input3 = new ComplexRecipe.RecipeElement[] //Gold
-                {
-                    new ComplexRecipe.RecipeElement(ElementLoader.FindElementByHash(SimHashes.GoldAmalgam).tag, 100f)
-                };
-            ComplexRecipe.RecipeElement[] Input4 = new ComplexRecipe.RecipeElement[] //Tungstan
-                {
-                    new ComplexRecipe.RecipeElement(ElementLoader.FindElementByHash(SimHashes.Wolframite).tag, 100f)
-                };
-            ComplexRecipe.RecipeElement[] Input5 = new ComplexRecipe.RecipeElement[] //Aluminium
-                {
-                    new ComplexRecipe.RecipeElement(ElementLoader.FindElementByHash(SimHashes.AluminumOre).tag, 100f)
-                };
-
-            ComplexRecipe.RecipeElement[] Output = new ComplexRecipe.RecipeElement[] //Copper
-            {
-                    new ComplexRecipe.RecipeElement(ElementLoader.FindElementByHash(SimHashes.MoltenCopper).tag, 100f)
-                };
-            ComplexRecipe.RecipeElement[] Output2 = new ComplexRecipe.RecipeElement[] //Iron
-            {
-                    new ComplexRecipe.RecipeElement(ElementLoader.FindElementByHash(SimHashes.MoltenIron).tag, 100f)
-                };
-            ComplexRecipe.RecipeElement[] Output3 = new ComplexRecipe.RecipeElement[] //Gold
-            {
-                    new ComplexRecipe.RecipeElement(ElementLoader.FindElementByHash(SimHashes.MoltenGold).tag, 100f)
-                };
-            ComplexRecipe.RecipeElement[] Output4 = new ComplexRecipe.RecipeElement[] //Tungstan
-            {
-                    new ComplexRecipe.RecipeElement(ElementLoader.FindElementByHash(SimHashes.MoltenTungsten).tag, 100f)
-                };
-            ComplexRecipe.RecipeElement[] Output5 = new ComplexRecipe.RecipeElement[] //Aluminium
-            {
-                    new ComplexRecipe.RecipeElement(ElementLoader.FindElementByHash(SimHashes.MoltenAluminum).tag, 100f)
-                };
-
-
-            string recipeID  = ComplexRecipeManager.MakeRecipeID("Inductor", Input, Output);
-            string recipeID2 = ComplexRecipeManager.MakeRecipeID("Inductor", Input2, Output2);
-            string recipeID3 = ComplexRecipeManager.MakeRecipeID("Inductor", Input3, Output3);
-            string recipeID4 = ComplexRecipeManager.MakeRecipeID("Inductor", Input4, Output4);
-            string recipeID5 = ComplexRecipeManager.MakeRecipeID("Inductor", Input5, Output5);
-
-            new ComplexRecipe(recipeID, Input, Output)
-            {
-                time = 100f,
-                description = string.Format(InductorConfig.RECIPE_DESCRIPTION, ElementLoader.GetElement(Input[0].material).name, ElementLoader.GetElement(Output[0].material).name),
-                fabricators = new List<Tag>()
-                    {
-                        TagManager.Create("inductor")
-                    },
-                nameDisplay = ComplexRecipe.RecipeNameDisplay.Result
-            };
-
-            new ComplexRecipe(recipeID2, Input2, Output2)
-            {
-                time = 100f,
-                description = string.Format(InductorConfig.RECIPE_DESCRIPTION, ElementLoader.GetElement(Input2[0].material).name, ElementLoader.GetElement(Output2[0].material).name),
-                fabricators = new List<Tag>()
-                    {
-                        TagManager.Create("inductor")
-                    },
-                nameDisplay = ComplexRecipe.RecipeNameDisplay.Result
-            };
-
-            new ComplexRecipe(recipeID3, Input3, Output3)
-            {
-                time = 100f,
-                description = string.Format(InductorConfig.RECIPE_DESCRIPTION, ElementLoader.GetElement(Input3[0].material).name, ElementLoader.GetElement(Output3[0].material).name),
-                fabricators = new List<Tag>()
-                    {
-                        TagManager.Create("inductor")
-                    },
-                nameDisplay = ComplexRecipe.RecipeNameDisplay.Result
-            };
-
-            new ComplexRecipe(recipeID4, Input4, Output4)
-            {
-                time = 100f,
-                description = string.Format(InductorConfig.RECIPE_DESCRIPTION, ElementLoader.GetElement(Input4[0].material).name, ElementLoader.GetElement(Output4[0].material).name),
-                fabricators = new List<Tag>()
-                    {
-                        TagManager.Create("inductor")
-                    },
-                nameDisplay = ComplexRecipe.RecipeNameDisplay.Result
-            };
-
-            new ComplexRecipe(recipeID5, Input5, Output5)
-            {
-                time = 100f,
-                description = string.Format(InductorConfig.RECIPE_DESCRIPTION, ElementLoader.GetElement(Input5[0].material).name, ElementLoader.GetElement(Output5[0].material).name),
-                fabricators = new List<Tag>()
-                    {
-                        TagManager.Create("inductor")
-                    },
-                nameDisplay = ComplexRecipe.RecipeNameDisplay.Result
-            };
-            ComplexRecipe.RecipeElement[] array = new ComplexRecipe.RecipeElement[]
-            {
-            new ComplexRecipe.RecipeElement(ElementLoader.FindElementByHash(SimHashes.IronOre).tag, 100f)
-            };
-            ComplexRecipe.RecipeElement[] array2 = new ComplexRecipe.RecipeElement[]
-            {
-            new ComplexRecipe.RecipeElement(ElementLoader.FindElementByHash(SimHashes.MoltenIron).tag, 100f)
-            };
-
-            string obsolete_id = ComplexRecipeManager.MakeObsoleteRecipeID("Inductor", array[0].material);
-            string text = ComplexRecipeManager.MakeRecipeID("Inductor", array, array2);
-            ComplexRecipe complexRecipe = new ComplexRecipe(text, array, array2);
-            complexRecipe.time = 40f;
-            complexRecipe.nameDisplay = ComplexRecipe.RecipeNameDisplay.Output;
-            complexRecipe.description = string.Format(InductorConfig.RECIPE_DESCRIPTION, ElementLoader.GetElement(array2[0].material).name, ElementLoader.GetElement(array[0].material).name);
-            complexRecipe.fabricators = new List<Tag>
-            {
-                TagManager.Create("Inductor")
-            };
-            ComplexRecipeManager.Get().AddObsoleteIDMapping(obsolete_id, text);*/
-
-
-
-
-
-
-            Prioritizable.AddRef(go);
         }
+
 
         public override void DoPostConfigureComplete(GameObject go)
         {

@@ -18,6 +18,11 @@ namespace Inductornator
             base.OnPrefabInit();
         }
 
+        protected override void OnSpawn()
+        {
+            base.OnSpawn();
+        }
+
         private void CheckPipes(object data)
         {
             KSelectable component = base.GetComponent<KSelectable>();
@@ -26,7 +31,7 @@ namespace Inductornator
             if (gameObject != null)
             {
                 PrimaryElement component2 = gameObject.GetComponent<PrimaryElement>();
-                if (component2.Element.highTemp > ElementLoader.FindElementByHash(SimHashes.MoltenTungsten).lowTemp)
+                if (component2.Element.highTemp > ElementLoader.FindElementByHash(SimHashes.MoltenGlass).lowTemp)
                 {
                     component.RemoveStatusItem(this.statusHandle, false);
                 }

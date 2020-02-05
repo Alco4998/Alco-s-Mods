@@ -7,22 +7,25 @@ using STRINGS;
 
 namespace Inductornator
 {
-    [HarmonyPatch(typeof(Game), "OnPrefabInit")]
-    internal class TemplateMod_Game_OnPrefabInit
-    {
-        private static void Postfix(Game __instance)
-        {
-            Debug.Log(" === Inductornator XL Ultra Don't @ me === ");
-        }
-    }
-
     [HarmonyPatch(typeof(GeneratedBuildings), "LoadGeneratedBuildings")]
     internal class GeneratedBuildings_LoadGeneratedBuildings
     {
         private static void Prefix()
         {
             Strings.Add($"STRINGS.BUILDINGS.PREFABS.{InductorConfig.ID.ToUpper()}.NAME", UI.FormatAsLink(InductorConfig.NAME, InductorConfig.ID));
-            Strings.Add($"STRINGS.BUILDINGS.PREFABS.{InductorConfig.ID.ToUpper()}.EFFECT", InductorConfig.EFFECT);
+
+            Strings.Add($"STRINGS.BUILDINGS.PREFABS.{InductorConfig.ID.ToUpper()}.EFFECT",
+            
+                string.Concat(
+                    "Produces ",
+                    UI.FormatAsLink("Molten Refined Metal", "REFINEDMETAL"),
+                    " from raw ",
+                    UI.FormatAsLink("Metal Ore", "RAWMETAL"),
+                    "\nbut ",
+                    UI.FormatAsLink("Heats", "HEAT"),
+                    " itself up significantly"
+                )); 
+
             Strings.Add($"STRINGS.BUILDINGS.PREFABS.{InductorConfig.ID.ToUpper()}.DESC", InductorConfig.DESCRIPTION);
 
             ModUtil.AddBuildingToPlanScreen("Refining", InductorConfig.ID);
