@@ -16,6 +16,7 @@ namespace Inductornator
         protected override void OnPrefabInit()
         {
             base.OnPrefabInit();
+            base.Subscribe<Inductor>(-158430,Inductor.CheckPipesDelegate);
         }
 
         protected override void OnSpawn()
@@ -31,7 +32,7 @@ namespace Inductornator
             if (gameObject != null)
             {
                 PrimaryElement component2 = gameObject.GetComponent<PrimaryElement>();
-                if (component2.Element.highTemp > ElementLoader.FindElementByHash(SimHashes.MoltenGlass).lowTemp)
+                if (component2.Element.highTemp > ElementLoader.FindElementByHash(SimHashes.MoltenTungsten).lowTemp)
                 {
                     component.RemoveStatusItem(this.statusHandle, false);
                 }

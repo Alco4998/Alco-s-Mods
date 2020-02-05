@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Harmony;
@@ -12,7 +13,7 @@ namespace Inductornator
     {
         private static void Prefix()
         {
-            Strings.Add($"STRINGS.BUILDINGS.PREFABS.{InductorConfig.ID.ToUpper()}.NAME", UI.FormatAsLink(InductorConfig.NAME, InductorConfig.ID));
+            Strings.Add($"STRINGS.BUILDINGS.PREFABS.{InductorConfig.ID.ToUpper()}.NAME", UI.FormatAsLink(InductorConfig.ID, InductorConfig.ID));
 
             Strings.Add($"STRINGS.BUILDINGS.PREFABS.{InductorConfig.ID.ToUpper()}.EFFECT",
             
@@ -23,7 +24,9 @@ namespace Inductornator
                     UI.FormatAsLink("Metal Ore", "RAWMETAL"),
                     "\nbut ",
                     UI.FormatAsLink("Heats", "HEAT"),
-                    " itself up significantly"
+                    " itself up significantly.\n",
+                    " Pipe will melt if not insulated or strong enought to contain ",
+                    UI.FormatAsLink("Molten Tungstun", "MOLTENTUNGSTEN")
                 )); 
 
             Strings.Add($"STRINGS.BUILDINGS.PREFABS.{InductorConfig.ID.ToUpper()}.DESC", InductorConfig.DESCRIPTION);

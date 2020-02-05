@@ -8,11 +8,7 @@ namespace Inductornator
 {
     public class InductorConfig : IBuildingConfig
     {
-        public const string ID = "Inductor";
-
-        public const string NAME = "Inductor";
-
-        public const string EFFECT = "test";
+        public const string ID = "Inductornator";
 
         public const string DESCRIPTION = "Melt metals with the great power of magnets to produce Loads of Metals without dupes";
 
@@ -57,26 +53,27 @@ namespace Inductornator
         {
             go.AddOrGet<DropAllWorkable>();
             go.AddOrGet<BuildingComplete>().isManuallyOperated = true;
-            Inductor Inductor = go.AddOrGet<Inductor>();
-            Inductor.sideScreenStyle = ComplexFabricatorSideScreen.StyleSetting.ListQueueHybrid;
+            GlassForge inductor = go.AddOrGet<GlassForge>();
+            inductor.sideScreenStyle = ComplexFabricatorSideScreen.StyleSetting.ListQueueHybrid;
             go.AddOrGet<CopyBuildingSettings>();
             ComplexFabricatorWorkable complexFabricatorWorkable = go.AddOrGet<ComplexFabricatorWorkable>();
-            Inductor.duplicantOperated = false;
-            BuildingTemplates.CreateComplexFabricatorStorage(go, Inductor);
-            Inductor.outStorage.capacityKg = 2000f;
-            Inductor.storeProduced = true;
-            Inductor.inStorage.SetDefaultStoredItemModifiers(InductorConfig.RefineryStoredItemModifiers);
-            Inductor.buildStorage.SetDefaultStoredItemModifiers(InductorConfig.RefineryStoredItemModifiers);
-            Inductor.outStorage.SetDefaultStoredItemModifiers(InductorConfig.RefineryStoredItemModifiers);
-            Inductor.outputOffset = new Vector3(1f, 0.5f);
+            inductor.duplicantOperated = true;
+            BuildingTemplates.CreateComplexFabricatorStorage(go, inductor);
+            inductor.outStorage.capacityKg = 2000f;
+            inductor.storeProduced = false;
+            inductor.inStorage.SetDefaultStoredItemModifiers(InductorConfig.RefineryStoredItemModifiers);
+            inductor.buildStorage.SetDefaultStoredItemModifiers(InductorConfig.RefineryStoredItemModifiers);
+            inductor.outStorage.SetDefaultStoredItemModifiers(InductorConfig.RefineryStoredItemModifiers);
+            inductor.outputOffset = new Vector3(1f, 0.5f);
+
             complexFabricatorWorkable.overrideAnims = new KAnimFile[]
             {
                 Assets.GetAnim("anim_interacts_metalrefinery_kanim")
             };
 
-            Inductor.resultState = ComplexFabricator.ResultState.Melted;
+            inductor.resultState = ComplexFabricator.ResultState.Melted;
             ConduitDispenser conduitDispenser = go.AddOrGet<ConduitDispenser>();
-            conduitDispenser.storage = Inductor.outStorage;
+            conduitDispenser.storage = inductor.outStorage;
             conduitDispenser.conduitType = ConduitType.Liquid;
             conduitDispenser.elementFilter = null;
             conduitDispenser.alwaysDispense = true;
