@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using TUNING;
 using UnityEngine;
 
-namespace Inductornator
+namespace Inductinator
 {
     public class InductorConfig : IBuildingConfig
     {
-        public const string ID = "Inductornator";
+        public const string ID = "Inductinator";
 
         public const string DESCRIPTION = "Melt metals with the great power of magnets to produce Loads of Metals without dupes";
 
@@ -26,21 +26,21 @@ namespace Inductornator
 
         public override BuildingDef CreateBuildingDef()
         {
-            string id = "Inductor";
+            string id = InductorConfig.ID;
             int width = 5;
             int height = 4;
             string anim = "glassrefinery_kanim";
             int hitpoints = 30;
             float construction_time = 60f;
             float[] tIER = TUNING.BUILDINGS.CONSTRUCTION_MASS_KG.TIER5;
-            string[] aLL_MINERALS = MATERIALS.ALL_MINERALS;
+            string[] aLL_MINERALS = MATERIALS.REFINED_METALS;
             float melting_point = 2400f;
             BuildLocationRule build_location_rule = BuildLocationRule.OnFloor;
             EffectorValues tIER2 = NOISE_POLLUTION.NOISY.TIER6;
             BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(id, width, height, anim, hitpoints, construction_time, tIER, aLL_MINERALS, melting_point, build_location_rule, TUNING.BUILDINGS.DECOR.PENALTY.TIER2, tIER2, 0.2f);
             buildingDef.RequiresPowerInput = true;
-            buildingDef.EnergyConsumptionWhenActive = 1200f;
-            buildingDef.SelfHeatKilowattsWhenActive = 16f;
+            buildingDef.EnergyConsumptionWhenActive = 3000f;
+            buildingDef.SelfHeatKilowattsWhenActive = 64f;
             buildingDef.OutputConduitType = ConduitType.Liquid;
             buildingDef.UtilityOutputOffset = InductorConfig.outPipeOffset;
             buildingDef.ViewMode = OverlayModes.Power.ID;
@@ -57,10 +57,10 @@ namespace Inductornator
             inductor.sideScreenStyle = ComplexFabricatorSideScreen.StyleSetting.ListQueueHybrid;
             go.AddOrGet<CopyBuildingSettings>();
             ComplexFabricatorWorkable complexFabricatorWorkable = go.AddOrGet<ComplexFabricatorWorkable>();
-            inductor.duplicantOperated = true;
+            inductor.duplicantOperated = false;
             BuildingTemplates.CreateComplexFabricatorStorage(go, inductor);
             inductor.outStorage.capacityKg = 2000f;
-            inductor.storeProduced = false;
+            inductor.storeProduced = true;
             inductor.inStorage.SetDefaultStoredItemModifiers(InductorConfig.RefineryStoredItemModifiers);
             inductor.buildStorage.SetDefaultStoredItemModifiers(InductorConfig.RefineryStoredItemModifiers);
             inductor.outStorage.SetDefaultStoredItemModifiers(InductorConfig.RefineryStoredItemModifiers);
@@ -100,11 +100,11 @@ namespace Inductornator
                     {
                     new ComplexRecipe.RecipeElement(highTempTransition.tag, 100f)
                     };
-                    string obsolete_id = ComplexRecipeManager.MakeObsoleteRecipeID("Inductor", current.tag);
-                    string text = ComplexRecipeManager.MakeRecipeID("Inductor", array, array2);
+                    string obsolete_id = ComplexRecipeManager.MakeObsoleteRecipeID("Inductinator", current.tag);
+                    string text = ComplexRecipeManager.MakeRecipeID("Inductinator", array, array2);
                     complexRecipe = new ComplexRecipe(text, array, array2)
                     {
-                        time = (current.highTemp / 10),
+                        time = (current.highTemp / 10)/4,
 
                         description = string.Format(RECIPE_DESCRIPTION, highTempTransition.name, current.name),
 
@@ -112,7 +112,7 @@ namespace Inductornator
 
                         fabricators = new List<Tag>
                         {
-                            TagManager.Create("Inductor")
+                            TagManager.Create("Inductinator")
                         }
                     };
                 ComplexRecipeManager.Get().AddObsoleteIDMapping(obsolete_id, text);

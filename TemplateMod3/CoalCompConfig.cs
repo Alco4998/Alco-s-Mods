@@ -17,11 +17,11 @@ namespace CoalComp
             int height = 1;
             string anim = "filter_gas_kanim";
             int hitpoints = 100;
-            float construction_time = 480f;
+            float construction_time = 60f;
             float[] tIER = BUILDINGS.CONSTRUCTION_MASS_KG.TIER3;
             string[] aLL_METALS = MATERIALS.ALL_METALS;
             EffectorValues tIER2 = NOISE_POLLUTION.NOISY.TIER5;
-            BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(id, width, height, anim, hitpoints, construction_time, tIER, aLL_METALS, 2400f, BuildLocationRule.NotInTiles, BUILDINGS.DECOR.PENALTY.TIER1, tIER2, 0.2f);
+            BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(id, width, height, anim, hitpoints, construction_time, tIER, aLL_METALS, 2400f, BuildLocationRule.Anywhere, BUILDINGS.DECOR.PENALTY.TIER1, tIER2, 0.2f);
             buildingDef.Overheatable = false;
             buildingDef.RequiresPowerInput = true;
             buildingDef.PowerInputOffset = new CellOffset(0, 0);
@@ -76,17 +76,14 @@ namespace CoalComp
 
         public override void DoPostConfigurePreview(BuildingDef def, GameObject go)
         {
-            GeneratedBuildings.RegisterLogicPorts(go, LogicOperationalController.INPUT_PORTS_0_1);
         }
 
         public override void DoPostConfigureUnderConstruction(GameObject go)
         {
-            GeneratedBuildings.RegisterLogicPorts(go, LogicOperationalController.INPUT_PORTS_0_1);
         }
 
         public override void DoPostConfigureComplete(GameObject go)
         {
-            GeneratedBuildings.RegisterLogicPorts(go, LogicOperationalController.INPUT_PORTS_0_1);
             go.AddOrGet<LogicOperationalController>();
             go.AddOrGetDef<PoweredActiveController.Def>();
         }

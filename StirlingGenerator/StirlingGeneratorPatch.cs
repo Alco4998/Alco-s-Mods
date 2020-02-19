@@ -39,14 +39,21 @@ namespace StirlingGenerator
             }
         }
 
-        [HarmonyPatch(typeof(SingleSliderSideScreen))]
-        [HarmonyPatch("IsValidForTarget")]
-        public class StirlingGenerator_patch
+        [HarmonyPatch(typeof(SingleSliderSideScreen), "IsValidForTarget")]
+        public class SingleSliderSideScreen_IsValidForTarget
         {
-            public static  void Postfix(bool __result, GameObject target)
+            public static void Postfix(ref bool __result, GameObject target)
             {
-                if (target.HasTag(TagManager.Create(StirlingGeneratorConfig.ID)))
-                    __result = false;
+                if (target.GetComponent<KPrefabID>() != null)
+                {
+
+                    KPrefabID component = target.GetComponent<KPrefabID>();
+
+                    if (component.HasTag("StirlingGenerator".ToTag()))
+                    {
+                        __result = false;
+                    }
+                }
             }
         }
     }

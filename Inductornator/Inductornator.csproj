@@ -7,8 +7,8 @@
     <ProjectGuid>{6F51F65E-93E3-4683-9079-F8B8F98E0F10}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Inductornator</RootNamespace>
-    <AssemblyName>Inductornator</AssemblyName>
+    <RootNamespace>Inductinator</RootNamespace>
+    <AssemblyName>Inductinator</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -54,9 +54,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Inductor.cs" />
-    <Compile Include="InductorConfig.cs" />
-    <Compile Include="InductorPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

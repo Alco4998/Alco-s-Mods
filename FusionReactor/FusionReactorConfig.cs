@@ -53,8 +53,8 @@ namespace FusionReactor
             
                 energyGenerator.meterOffset = Meter.Offset.Behind;
                 energyGenerator.powerDistributionOrder = 9;
-
                 energyGenerator.ignoreBatteryRefillPercent = true;
+
                 Storage storage = go.AddOrGet<Storage>();
                 storage.capacityKg = STORAGE_SIZE;
 
@@ -71,6 +71,9 @@ namespace FusionReactor
                 elementDropper.emitMass = 10f;
                 elementDropper.emitOffset = new Vector3(0f, 0f, 0f);
 
+                FusionReactor reactor = go.AddOrGet<FusionReactor>();
+                
+                
                 go.AddOrGet<LoopingSounds>();
                 Prioritizable.AddRef(go);
                 Tinkerable.MakePowerTinkerable(go);

@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Inductornator
+namespace Inductinator
 {
 
     public class Inductor : ComplexFabricator

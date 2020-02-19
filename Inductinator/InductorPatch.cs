@@ -6,7 +6,7 @@ using System.Text;
 using Harmony;
 using STRINGS;
 
-namespace Inductornator
+namespace Inductinator
 {
     [HarmonyPatch(typeof(GeneratedBuildings), "LoadGeneratedBuildings")]
     internal class GeneratedBuildings_LoadGeneratedBuildings

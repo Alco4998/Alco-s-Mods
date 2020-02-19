@@ -23,97 +23,85 @@ namespace StirlingGenerator
     {
         public const string ID = "StirlingGenerator";
 
+        private static readonly List<Storage.StoredItemModifier> StoredItemModifiers = new List<Storage.StoredItemModifier>
+        {
+            Storage.StoredItemModifier.Hide,
+            Storage.StoredItemModifier.Insulate,
+            Storage.StoredItemModifier.Seal
+        };
+
         public override BuildingDef CreateBuildingDef()
         {
             string id = "StirlingGenerator";
             int width = 2;
             int height = 2;
             string anim = "liquidconditioner_kanim";
-            int hitpoints = 30;
-            float construction_time = 60f;
-            string[] construction_materials = new string[]
-            {
-            "RefinedMetal",
-            "Plastic"
-            };
-            EffectorValues nONE = NOISE_POLLUTION.NONE;
-            BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(id, width, height, anim, hitpoints, construction_time, new float[]
-            {
-            BUILDINGS.CONSTRUCTION_MASS_KG.TIER5[0],
-            BUILDINGS.CONSTRUCTION_MASS_KG.TIER3[0]
-            }, construction_materials, 1600f, BuildLocationRule.OnFloor, BUILDINGS.DECOR.NONE, nONE, 1f);
-            buildingDef.OutputConduitType = ConduitType.Liquid;
-            buildingDef.UtilityOutputOffset = new CellOffset(2, 1);
-            buildingDef.GeneratorWattageRating = StirlingConst.MAX_WATTAGE;
-            buildingDef.GeneratorBaseCapacity = StirlingConst.MAX_WATTAGE;
-            buildingDef.Entombable = true;
-            buildingDef.IsFoundation = false;
-            buildingDef.PermittedRotations = PermittedRotations.FlipH;
-            buildingDef.ViewMode = OverlayModes.Power.ID;
-            buildingDef.AudioCategory = "Metal";
-            buildingDef.PowerOutputOffset = new CellOffset(1, 0);
-            buildingDef.OverheatTemperature = 1273.15f;
+            int hitpoints = 100;
+            float construction_time = 120f;
+            float[] tIER = BUILDINGS.CONSTRUCTION_MASS_KG.TIER6;
+            string[] aLL_METALS = MATERIALS.ALL_METALS;
+            float melting_point = 1600f;
+            BuildLocationRule build_location_rule = BuildLocationRule.OnFloor;
+            EffectorValues tIER2 = NOISE_POLLUTION.NOISY.TIER2;
+            BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(id, width, height, anim, hitpoints, construction_time, tIER, aLL_METALS, melting_point, build_location_rule, BUILDINGS.DECOR.NONE, tIER2, 0.2f);
+            buildingDef.GeneratorWattageRating = 1000f;
+            buildingDef.GeneratorBaseCapacity = 1000f;
+            buildingDef.SelfHeatKilowattsWhenActive = -585.06f;
             buildingDef.InputConduitType = ConduitType.Liquid;
-            buildingDef.UtilityInputOffset = new CellOffset(1, 1);
+            buildingDef.OutputConduitType = ConduitType.Liquid;
+            buildingDef.Floodable = false;
+            buildingDef.ViewMode = OverlayModes.Power.ID;
+            buildingDef.UtilityInputOffset = new CellOffset(0, 0);
+            buildingDef.PermittedRotations = PermittedRotations.FlipH;
+            buildingDef.ViewMode = OverlayModes.LiquidConduits.ID;
+            buildingDef.OverheatTemperature = 398.15f;
             return buildingDef;
+        }
+
+        public override void ConfigureBuildingTemplate(GameObject go, Tag prefab_tag)
+        {
+            go.AddOrGet<LoopingSounds>();
+            StirlingGenerator generator = go.AddOrGet<StirlingGenerator>();
+
+
+            ConduitConsumer conduitConsumer = go.AddOrGet<ConduitConsumer>();
+            conduitConsumer.conduitType = ConduitType.Liquid;
+            conduitConsumer.consumptionRate = 10f;
+
+            Storage storage = BuildingTemplates.CreateDefaultStorage(go, false);
+            storage.showInUI = true;
+            storage.capacityKg = 2f * conduitConsumer.consumptionRate;
+            storage.SetDefaultStoredItemModifiers(StirlingGeneratorConfig.StoredItemModifiers);
+
+            SolarPanel stirling = go.AddOrGet<SolarPanel>();
+            stirling.powerDistributionOrder = 8;
+
+            //EnergyGenerator energyGenerator = go.AddOrGet<EnergyGenerator>();
+            //energyGenerator.powerDistributionOrder = 8;
+            //energyGenerator.ignoreBatteryRefillPercent = true;
+            //energyGenerator.meterOffset = Meter.Offset.Behind;
+
+            go.AddOrGet<MinimumOperatingTemperature>().minimumTemperature = 273.15f;
+
+
+            Tinkerable.MakePowerTinkerable(go);
         }
 
         public override void DoPostConfigurePreview(BuildingDef def, GameObject go)
         {
-            GeneratedBuildings.RegisterLogicPorts(go, LogicOperationalController.INPUT_PORTS_0_0);
+            GeneratedBuildings.RegisterLogicPorts(go, LogicOperationalController.INPUT_PORTS_1_1);
         }
 
         public override void DoPostConfigureUnderConstruction(GameObject go)
         {
-            base.DoPostConfigureUnderConstruction(go);
-            GeneratedBuildings.RegisterLogicPorts(go, LogicOperationalController.INPUT_PORTS_0_0);
-            Constructable component = go.GetComponent<Constructable>();
-            component.requiredSkillPerk = Db.Get().SkillPerks.CanPowerTinker.Id;
+            GeneratedBuildings.RegisterLogicPorts(go, LogicOperationalController.INPUT_PORTS_1_1);
         }
 
         public override void DoPostConfigureComplete(GameObject go)
         {
-            GeneratedBuildings.RegisterLogicPorts(go, LogicOperationalController.INPUT_PORTS_0_0);
-            Storage storage = go.AddComponent<Storage>();
-            storage.showDescriptor = false;
-            storage.showInUI = false;
-            storage.storageFilters = STORAGEFILTERS.LIQUIDS;
-            storage.SetDefaultStoredItemModifiers(StirlingConst.StoredItemModifiers);
-            storage.capacityKg = 10f;
-            Storage storage2 = go.AddComponent<Storage>();
-            storage2.showDescriptor = false;
-            storage2.showInUI = false;
-            storage2.storageFilters = STORAGEFILTERS.GASES;
-            storage2.SetDefaultStoredItemModifiers(StirlingConst.StoredItemModifiers);
-            SteamTurbine steamTurbine = go.AddOrGet<SteamTurbine>();
-            steamTurbine.srcElem = SimHashes.Steam;
-            steamTurbine.destElem = SimHashes.Water;
-            steamTurbine.pumpKGRate = 2f;
-            steamTurbine.maxSelfHeat = 64f;
-            steamTurbine.maxWattage = 850f;
-            steamTurbine.wasteHeatToTurbinePercent = 0.1f;
-            ConduitDispenser conduitDispenser = go.AddOrGet<ConduitDispenser>();
-            conduitDispenser.elementFilter = new SimHashes[]
-            {
-                SimHashes.Water
-            };
-            conduitDispenser.conduitType = ConduitType.Liquid;
-            conduitDispenser.storage = storage;
-            conduitDispenser.alwaysDispense = true;
+            GeneratedBuildings.RegisterLogicPorts(go, LogicOperationalController.INPUT_PORTS_1_1);
             go.AddOrGet<LogicOperationalController>();
-            Prioritizable.AddRef(go);
-            go.GetComponent<KPrefabID>().prefabSpawnFn += delegate (GameObject game_object)
-            {
-                HandleVector<int>.Handle handle = GameComps.StructureTemperatures.GetHandle(game_object);
-                StructureTemperaturePayload payload = GameComps.StructureTemperatures.GetPayload(handle);
-                Extents extents = game_object.GetComponent<Building>().GetExtents();
-                Extents newExtents = new Extents(extents.x, extents.y - 1, extents.width, extents.height + 1);
-                payload.OverrideExtents(newExtents);
-                GameComps.StructureTemperatures.SetPayload(handle, ref payload);
-                Storage[] components = game_object.GetComponents<Storage>();
-                game_object.GetComponent<SteamTurbine>().SetStorage(components[1], components[0]);
-            };
-            Tinkerable.MakePowerTinkerable(go);
+            go.AddOrGetDef<PoweredActiveController.Def>();
         }
     }
 }
