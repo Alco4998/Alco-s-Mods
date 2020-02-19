@@ -71,8 +71,7 @@ namespace FusionReactor
                 elementDropper.emitMass = 10f;
                 elementDropper.emitOffset = new Vector3(0f, 0f, 0f);
 
-                FusionReactor reactor = go.AddOrGet<FusionReactor>();
-                
+                //FusionReactor reactor = go.AddOrGet<FusionReactor>();
                 
                 go.AddOrGet<LoopingSounds>();
                 Prioritizable.AddRef(go);

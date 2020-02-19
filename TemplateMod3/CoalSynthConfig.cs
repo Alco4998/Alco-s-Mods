@@ -43,6 +43,7 @@ namespace CoalSynth
             storage.showInUI = true;
             storage.capacityKg = 50f;
             storage.SetDefaultStoredItemModifiers(Storage.StandardSealedStorage);
+
             ElementConsumer elementConsumer = go.AddOrGet<ElementConsumer>();   
             elementConsumer.elementToConsume = SimHashes.CarbonDioxide;
             elementConsumer.consumptionRate = 0.3f;
@@ -52,6 +53,7 @@ namespace CoalSynth
             elementConsumer.isRequired = false;
             elementConsumer.storeOnConsume = true;
             elementConsumer.showDescriptor = false;
+
             ElementDropper elementDropper = go.AddComponent<ElementDropper>();
             elementDropper.emitMass = 10f;
             elementDropper.emitTag = new Tag("Carbon");

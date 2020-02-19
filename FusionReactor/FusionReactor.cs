@@ -63,63 +63,33 @@ namespace FusionReactor
         {
             public GameStateMachine<FusionReactor.States, FusionReactor.StatesInstance, FusionReactor, object>.State waiting;
 
-            public GameStateMachine<FusionReactor.States, FusionReactor.StatesInstance, FusionReactor, object>.State hasfilter;
+            public GameStateMachine<FusionReactor.States, FusionReactor.StatesInstance, FusionReactor, object>.State HasInput;
 
-            public GameStateMachine<FusionReactor.States, FusionReactor.StatesInstance, FusionReactor, object>.State converting;
+            public GameStateMachine<FusionReactor.States, FusionReactor.StatesInstance, FusionReactor, object>.State HasHeat;
+
+            public GameStateMachine<FusionReactor.States, FusionReactor.StatesInstance, FusionReactor, object>.State IsRunning;
 
             public override void InitializeStates(out StateMachine.BaseState default_state)
             {
-                default_state = this.converting;
-                this.waiting
-                    .EventTransition(GameHashes.OnStorageChange, this.hasfilter, (FusionReactor.StatesInstance smi) => smi.master.HasFilter() && smi.master.operational.IsOperational)
-                    .EventTransition(GameHashes.OperationalChanged, this.hasfilter, (FusionReactor.StatesInstance smi) => smi.master.HasFilter() && smi.master.operational.IsOperational);
+                default_state = waiting;
 
-                this.hasfilter
-                    .EventTransition(GameHashes.OnStorageChange, this.converting, (FusionReactor.StatesInstance smi) => smi.master.IsConvertable())
-                    .EventTransition(GameHashes.OperationalChanged, this.waiting, (FusionReactor.StatesInstance smi) => !smi.master.operational.IsOperational).Enter("EnableConsumption", delegate (FusionReactor.StatesInstance smi)
-                    {
-                        smi.master.conduitConsumer.EnableConsumption(true);
-                    ).Exit("DisableConsumption", delegate (FusionReactor.StatesInstance smi)
-                    {
-                        smi.master.conduitConsumer.EnableConsumption(false);
-                    });
-                this.converting.Enter("SetActive(true)", delegate (FusionReactor.StatesInstance smi)
-                {
-                    smi.master.operational.SetActive(true, false);
-                }).Exit("SetActive(false)", delegate (FusionReactor.StatesInstance smi)
-                {
-                    smi.master.operational.SetActive(false, false);
-                }).Enter("EnableConsumption", delegate (FusionReactor.StatesInstance smi)
-                }
+                this.waiting
+                    .EventTransition(GameHashes.OnStorageChange, this.HasInput, (FusionReactor.StatesInstance smi) => smi.master.HasInput() && smi.master.operational.IsOperational)
+                    .EventTransition(GameHashes.OperationalChanged, this.waiting, (FusionReactor.StatesInstance smi) => smi.master.HasInput() && smi.master.operational.IsOperational);
+
+                this.HasInput
+                     .EventTransition(GameHashes.OnStorageChange, this.HasInput, (FusionReactor.StatesInstance smi) => smi.master.HasInput() && smi.master.operational.IsOperational)
+                     .EventTransition(GameHashes.OperationalChanged, this.waiting, (FusionReactor.StatesInstance smi) => smi.master.HasInput() && smi.master.operational.IsOperational);
+            }
         }
 
-        [MyCmpGet]
         private Operational operational;
 
-        [MyCmpGet]
         private Storage storage;
 
-        [MyCmpGet]
-        private ElementConverter elementConverter;
-
-        [MyCmpGet]
-        private ConduitConsumer conduitConsumer;
-
-        [MyCmpGet]
-        private conduitConsumer conduitConsumer;
-
-        public Tag filterTag;
-
-        public bool HasFilter()
+        public bool HasInput()
         {
-            //this is still really bad
-            //this.elementConverter.HasEnoughMass(this.filterTag);
-            return this.storage.Has(SimHashes.Hydrogen.CreateTag()) && this.storage.GetAmountAvailable(SimHashes.Hydrogen.CreateTag()) >= 2f;
-        }
-
-        public bool IsConvertable()
-        {
-            return true;
+            return this.storage.GetAmountAvailable(new Tag("Hydrogen")) >= 2f;
         }
 
         protected override void OnSpawn()
@@ -127,11 +97,5 @@ namespace FusionReactor
             base.OnSpawn();
             base.smi.StartSM();
         }
-
-        public List<Descriptor> GetDescriptors(BuildingDef def)
-        {
-            return null;
-        }
     }
-
 }
